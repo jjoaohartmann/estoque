@@ -31,7 +31,7 @@ res.status(201).json(novoItem)
 app.put("/produtos/:id", async(req, res) => {
     const {id} = req.params
     const {nome, categoria, quantidade} = req.body
-
+try{
     const produtoAtualizado = await prisma.produtos.update({
         where: {id: Number(id)},
         data: {
@@ -41,6 +41,22 @@ app.put("/produtos/:id", async(req, res) => {
         }
     })
     res.json(produtoAtualizado)
+}catch(error){
+        res.status(404).json({error: "Não foi possivel autalizar o Produto"})
+    }
+})
+
+app.delete("/produtos/:id", async(req, res) => {
+    const {id} = req.params;
+
+    try{
+    await prisma.produtos.delete({
+    where: {id: Number(id)}
+    })
+    res.status(204).send()
+}catch(error){
+    res.status(404).json({error: "Não foi possivel deletar o produto"})
+}
 })
 
 app.listen(PORT, ()=>{
