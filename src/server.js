@@ -17,8 +17,33 @@ app.get("/produtos", async(req, res) =>{
     }
 })
 
-app.listen(PORT, ()=>{
-console.log("API rodante")
+app.post("/produtos", async(req, res) => {
+ const {nome, categoria, quantidade} = req.body
+ try{
+    const novoItem = await prisma.produtos.create({
+        data: {nome, categoria, quantidade: Number(quantidade)}
+    });
+res.status(201).json(novoItem)
+ }catch(error){
+    res.status(400).json({error: "Erro ao criar produto"})
+ }})
 
+app.put("/produtos/:id", async(req, res) => {
+    const {id} = req.params
+    const {nome, categoria, quantidade} = req.body
+
+    const produtoAtualizado = await prisma.produtos.update({
+        where: {id: Number(id)},
+        data: {
+            nome,
+            categoria,
+            quantidade: Number(quantidade)
+        }
+    })
+    res.json(produtoAtualizado)
 })
 
+app.listen(PORT, ()=>{
+console.log("API rodando")
+
+})
